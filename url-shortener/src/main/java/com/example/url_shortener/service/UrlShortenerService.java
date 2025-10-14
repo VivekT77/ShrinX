@@ -1,0 +1,58 @@
+package com.example.url_shortener.service;
+
+import com.example.url_shortener.model.UrlMapping;
+import com.example.url_shortener.repository.UrlMappingRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Service
+public class UrlShortenerService {
+
+    private static final String Base62_Chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private final UrlMappingRepository urlMappingRepository;
+    public UrlShortenerService(UrlMappingRepository urlMappingRepository){
+        this.urlMappingRepository = urlMappingRepository;
+    }
+    @Transactional
+    public String shortenUrl(String originalUrl){
+
+        UrlMapping urlMapping = new UrlMapping();
+        urlMapping.setOriginalUrl(originalUrl);
+        urlMapping.setCreationDate(LocalDateTime.now());
+
+        UrlMapping savedEntity = urlMappingRepository.save(urlMapping);
+
+        String shortCode = encodeBase62(savedEntity.getId());
+        savedEntity.setShortCode(shortCode);
+        urlMappingRepository.save(savedEntity);
+
+        return shortCode;
+    }
+    @Transactional
+    public String getOriginalUrlAndIncrementClicks(String shortCode){
+
+        UrlMapping urlMapping = urlMappingRepository.findByShortCode(shortCode).orElseThrow(() -> new RuntimeException
+                ("Url not found for shortCode: " + shortCode));
+
+        urlMapping.setClickCount(urlMapping.getClickCount() +1);
+        urlMappingRepository.save(urlMapping);
+        return urlMapping.getOriginalUrl();
+    }
+    private String encodeBase62(Long number){
+        if(number==0){
+            return String.valueOf(Base62_Chars.charAt(0));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        long num = number;
+
+        while (num>0){
+            int remainder = (int)(num % 62);
+            sb.append(Base62_Chars.charAt(remainder));
+            num /= 62;
+        }
+        return sb.reverse().toString();
+    }
+}
