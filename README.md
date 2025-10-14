@@ -1,4 +1,4 @@
-# Shrink_IT
+# ShrinX
 
 A **Spring Boot** web application that converts long URLs into short, shareable links and tracks usage analytics. This project provides a REST API for URL shortening, redirection and analytics, along with a user-friendly **Thymeleaf** frontend.
 
