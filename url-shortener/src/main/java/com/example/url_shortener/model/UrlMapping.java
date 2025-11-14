@@ -27,5 +27,45 @@ public class UrlMapping {
 
     private long clickCount;
 
+    //Getters
+    public Long getId() {
+        return id;
+    }
 
+    public String getOriginalUrl() {
+        return originalUrl;
+    }
+
+    public String getShortCode() {
+        return shortCode;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public long getClickCount() {
+        return clickCount;
+    }
+
+    //Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setOriginalUrl(String originalUrl) {
+        this.originalUrl = originalUrl;
+    }
+
+    public void setShortCode(String shortCode) {
+        this.shortCode = shortCode;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setClickCount(long clickCount) {
+        this.clickCount = clickCount;
+    }
 }

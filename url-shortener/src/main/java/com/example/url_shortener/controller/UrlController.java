@@ -2,6 +2,7 @@ package com.example.url_shortener.controller;
 
 import com.example.url_shortener.dto.ShortenUrlRequest;
 import com.example.url_shortener.dto.ShortenUrlResponse;
+import com.example.url_shortener.dto.UrlStatsResponse;
 import com.example.url_shortener.service.UrlShortenerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
@@ -40,5 +41,10 @@ public class UrlController {
 //        return new ResponseEntity<>(headers, HttpStatus.FOUND);
         //same logic as above but with "fluent design patter"
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(originalUrl)).build();
+    }
+
+    @GetMapping("/api/v1/url/stats/{shortCode}")
+    public ResponseEntity<UrlStatsResponse> getUrlStats(@PathVariable String shortCode){
+        return null;
     }
 }

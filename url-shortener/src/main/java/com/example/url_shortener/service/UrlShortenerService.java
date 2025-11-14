@@ -1,11 +1,12 @@
 package com.example.url_shortener.service;
 
+import com.example.url_shortener.dto.UrlStatsResponse;
+import com.example.url_shortener.exception.UrlNotFoundException;
 import com.example.url_shortener.model.UrlMapping;
 import com.example.url_shortener.repository.UrlMappingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class UrlShortenerService {
@@ -30,6 +31,7 @@ public class UrlShortenerService {
 
         return shortCode;
     }
+
     @Transactional
     public String getOriginalUrlAndIncrementClicks(String shortCode){
 
@@ -40,6 +42,20 @@ public class UrlShortenerService {
         urlMappingRepository.save(urlMapping);
         return urlMapping.getOriginalUrl();
     }
+
+    public UrlStatsResponse getStats(String shortCode){
+
+        UrlMapping urlMapping = urlMappingRepository.findByShortCode(shortCode).orElseThrow(() -> new UrlNotFoundException("No statistics found for shortCode: " + shortCode));
+        String fullShortUrl = "https://localhost:8080/" + urlMapping.getShortCode();
+
+        return new UrlStatsResponse(
+                urlMapping.getOriginalUrl(),
+                fullShortUrl,
+                urlMapping.getCreationDate(),
+                urlMapping.getClickCount()
+        );
+    }
+
     private String encodeBase62(Long number){
         if(number==0){
             return String.valueOf(Base62_Chars.charAt(0));
