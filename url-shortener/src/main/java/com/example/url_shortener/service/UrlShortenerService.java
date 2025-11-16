@@ -7,6 +7,7 @@ import com.example.url_shortener.repository.UrlMappingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class UrlShortenerService {
@@ -43,10 +44,11 @@ public class UrlShortenerService {
         return urlMapping.getOriginalUrl();
     }
 
+    @Transactional(readOnly = true)
     public UrlStatsResponse getStats(String shortCode){
 
         UrlMapping urlMapping = urlMappingRepository.findByShortCode(shortCode).orElseThrow(() -> new UrlNotFoundException("No statistics found for shortCode: " + shortCode));
-        String fullShortUrl = "https://localhost:8080/" + urlMapping.getShortCode();
+        String fullShortUrl = "http://localhost:8080/api/v1/" + urlMapping.getShortCode();
 
         return new UrlStatsResponse(
                 urlMapping.getOriginalUrl(),
@@ -70,5 +72,12 @@ public class UrlShortenerService {
             num /= 62;
         }
         return sb.reverse().toString();
+    }
+
+    @Transactional
+    public List<UrlStatsResponse> getAllUrls() {
+        List<UrlMapping> allMappings = urlMappingRepository.findAll();
+
+        return allMappings.stream().map(UrlMapping -> new UrlStatsResponse(UrlMapping.getOriginalUrl(), "http://localhost:8080/api/v1/" + UrlMapping.getShortCode(),UrlMapping.getCreationDate(),UrlMapping.getClickCount())).toList();
     }
 }
