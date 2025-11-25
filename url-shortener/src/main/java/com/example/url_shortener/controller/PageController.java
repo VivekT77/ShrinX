@@ -19,14 +19,13 @@ public class PageController {
     }
     @GetMapping("/")
     public String home(){
-
         return "index";
     }
 
     @PostMapping("/shorten-web")
-    public String handleShortenForm(@RequestParam ("longUrl") String longUrl, Model model){
+    public String handleShortenForm(@RequestParam ("longUrl") String longUrl, @RequestParam (name= "customAlias", required = false) String customAlias,  Model model){
         try{
-            String shortCode = urlShortenerService.shortenUrl(longUrl);
+            String shortCode = urlShortenerService.shortenUrl(longUrl,null);
 
             String fullShortUrl = "http://localhost:8080/api/v1/" + shortCode;
             model.addAttribute("originalUrl", longUrl);
@@ -47,8 +46,6 @@ public class PageController {
 
         }catch (UrlNotFoundException e){
             model.addAttribute("statsError", "Statistics not found for short code:" + shortCode);
-        }catch (Exception e){
-            model.addAttribute("statsError", "Error retrieving stats: " + e.getMessage());
         }
         return "index";
     }

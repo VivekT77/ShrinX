@@ -1,8 +1,10 @@
 package com.example.url_shortener.controller;
 
 import com.example.url_shortener.dto.ShortenUrlRequest;
+import com.example.url_shortener.dto.ShortenUrlResponse;
 import com.example.url_shortener.dto.UrlStatsResponse;
 import com.example.url_shortener.service.UrlShortenerService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,11 @@ import java.net.URI;
 public class UrlController {
 
     @Autowired
-    private UrlShortenerService service;
+    private UrlShortenerService urlShortenerService;
+
+    public UrlController(UrlShortenerService urlShortenerService){
+        this.urlShortenerService = urlShortenerService;
+    }
 
     // Handle favicon to prevent errors
     @GetMapping("/favicon.ico")
@@ -24,9 +30,12 @@ public class UrlController {
         // Browsers automatically request this, just return empty
     }
 
-    @PostMapping("/shorten")
-    public ResponseEntity<String> shortenUrl(@RequestBody ShortenUrlRequest request) {
-        String response = service.shortenUrl(request.url());
+    @PostMapping("/api/v1/url/shorten")
+    public ResponseEntity<ShortenUrlResponse> shortenUrl(@Valid @RequestBody ShortenUrlRequest request) {
+
+        String shortCode = urlShortenerService.shortenUrl(request.url(),request.customAlias());
+        String fullShortUrl = "http://localhost:8080/" + shortCode;
+        ShortenUrlResponse response = new ShortenUrlResponse(fullShortUrl);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -39,7 +48,7 @@ public class UrlController {
         }
 
         try {
-            String originalUrl = service.getOriginalUrlAndIncrementClicks(shortCode);
+            String originalUrl = urlShortenerService.getOriginalUrlAndIncrementClicks(shortCode);
             return ResponseEntity.status(HttpStatus.FOUND)
                     .location(URI.create(originalUrl))
                     .build();
@@ -51,7 +60,7 @@ public class UrlController {
     @GetMapping("/{shortCode}/stats")
     public ResponseEntity<UrlStatsResponse> getStats(@PathVariable String shortCode) {
         try {
-            UrlStatsResponse stats = service.getStats(shortCode);
+            UrlStatsResponse stats = urlShortenerService.getStats(shortCode);
             return ResponseEntity.ok(stats);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

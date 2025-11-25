@@ -416,10 +416,25 @@
                         required
                 >
             </div>
+
+            <div>
+                <label for="customAlias"> Enter a Custom Alias(Optional):</label>
+            </div>
+            <div>
+                <input
+                        type="text"
+                        id="customAlias"
+                        name="customAlias"
+                        size="50"
+                        placeholder="e.g., my-awesome-event"
+                >
+            </div>
+            <div>
             <button type="submit" class="btn btn-primary">
                 <span>✨</span>
                 Shorten URL
             </button>
+            </div>
         </form>
 
         <div class="result" th:if="${shortUrlResult != null}">
