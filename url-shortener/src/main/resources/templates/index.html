@@ -408,6 +408,8 @@
         <form th:action="@{/shorten-web}" method="POST">
             <div class="form-group">
                 <label for="longUrl">Paste your long URL here:</label>
+            </div>
+            <div>
                 <input
                         type="text"
                         id="longUrl"
@@ -515,6 +517,10 @@
                     <div class="stat-label" th:text="${#temporals.format(urlStats.creationDate(), 'HH:mm')}">Time</div>
                 </div>
             </div>
+        </div>
+
+        <div class="result" style="background-color: #f8d7da; border-color: #f5c6cb" th:if="${aliasError != null}">
+            <p style="color: #721c24" th:text="${aliasError}"></p>
         </div>
 
         <div class="error" th:if="${statsError != null}">

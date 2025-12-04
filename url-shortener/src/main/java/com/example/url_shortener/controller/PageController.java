@@ -1,6 +1,7 @@
 package com.example.url_shortener.controller;
 
 import com.example.url_shortener.dto.UrlStatsResponse;
+import com.example.url_shortener.exception.AliasAlreadyExistsException;
 import com.example.url_shortener.exception.UrlNotFoundException;
 import com.example.url_shortener.service.UrlShortenerService;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ public class PageController {
     public PageController(UrlShortenerService urlShortenerService){
         this.urlShortenerService = urlShortenerService;
     }
+
     @GetMapping("/")
     public String home(){
         return "index";
@@ -24,15 +26,16 @@ public class PageController {
 
     @PostMapping("/shorten-web")
     public String handleShortenForm(@RequestParam ("longUrl") String longUrl, @RequestParam (name= "customAlias", required = false) String customAlias,  Model model){
-        try{
-            String shortCode = urlShortenerService.shortenUrl(longUrl,null);
 
-            String fullShortUrl = "http://localhost:8080/api/v1/" + shortCode;
-            model.addAttribute("originalUrl", longUrl);
+        model.addAttribute("originalUrl", longUrl);
+
+        try{
+            String shortCode = urlShortenerService.shortenUrl(longUrl, customAlias, null);
+            String fullShortUrl = "http://localhost:8080/" + shortCode;
             model.addAttribute("shortUrlResult", fullShortUrl);
         }
-        catch (Exception e){
-            model.addAttribute("Error","Failed to shorten URL:" + e.getMessage());
+        catch (AliasAlreadyExistsException e){
+            model.addAttribute("aliasError", e.getMessage());
         }
         return "index";
     }

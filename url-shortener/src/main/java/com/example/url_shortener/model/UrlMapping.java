@@ -23,10 +23,12 @@ public class UrlMapping {
     @Column(unique = true)
     private String shortCode;
 
+    @Column(nullable = false)
     private LocalDateTime creationDate;
 
     private long clickCount;
 
+    private LocalDateTime expirationDate;
     //Getters
     public Long getId() {
         return id;
@@ -48,6 +50,10 @@ public class UrlMapping {
         return clickCount;
     }
 
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
+    }
+
     //Setters
     public void setId(Long id) {
         this.id = id;
@@ -67,5 +73,9 @@ public class UrlMapping {
 
     public void setClickCount(long clickCount) {
         this.clickCount = clickCount;
+    }
+
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
     }
 }

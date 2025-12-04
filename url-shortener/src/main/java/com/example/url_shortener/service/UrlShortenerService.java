@@ -21,7 +21,7 @@ public class UrlShortenerService {
     }
 
     @Transactional
-    public String shortenUrl(String originalUrl, String customAlias) {
+    public String shortenUrl(String originalUrl, String customAlias,Integer hoursToExpire) {
 
         if (StringUtils.hasText(customAlias)) {
             if (urlMappingRepository.findByShortCode(customAlias).isPresent()) {
@@ -32,12 +32,22 @@ public class UrlShortenerService {
             newUrlMapping.setOriginalUrl(originalUrl);
             newUrlMapping.setCreationDate(LocalDateTime.now());
             newUrlMapping.setShortCode(customAlias);
+
+            if(hoursToExpire != null){
+                newUrlMapping.setExpirationDate(LocalDateTime.now().plusHours(hoursToExpire));
+            }
+
             urlMappingRepository.save(newUrlMapping);
             return customAlias;
-        } else {
+        }
+        else {
             UrlMapping urlMapping = new UrlMapping();
             urlMapping.setOriginalUrl(originalUrl);
             urlMapping.setCreationDate(LocalDateTime.now());
+
+            if(hoursToExpire != null){
+                urlMapping.setExpirationDate(LocalDateTime.now().plusHours(hoursToExpire));
+            }
 
             UrlMapping savedEntity = urlMappingRepository.save(urlMapping);
 
@@ -52,10 +62,14 @@ public class UrlShortenerService {
     @Transactional
     public String getOriginalUrlAndIncrementClicks(String shortCode){
 
-        UrlMapping urlMapping = urlMappingRepository.findByShortCode(shortCode).orElseThrow(() -> new RuntimeException
+        UrlMapping urlMapping = urlMappingRepository.findByShortCode(shortCode).orElseThrow(() -> new UrlNotFoundException
                 ("Url not found for shortCode: " + shortCode));
 
-        urlMapping.setClickCount(urlMapping.getClickCount() +1);
+        if(urlMapping.getExpirationDate() != null && urlMapping.getExpirationDate().isBefore(LocalDateTime.now())){
+            throw new UrlNotFoundException("This link has expired and is no longer active.");
+        }
+
+        urlMapping.setClickCount(urlMapping.getClickCount() + 1);
         urlMappingRepository.save(urlMapping);
         return urlMapping.getOriginalUrl();
     }
