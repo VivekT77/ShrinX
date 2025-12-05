@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/")
 public class UrlController {
 
     @Autowired
@@ -30,7 +30,7 @@ public class UrlController {
         // Browsers automatically request this, just return empty
     }
 
-    @PostMapping("/api/v1/url/shorten")
+    @PostMapping("/url/shorten")
     public ResponseEntity<ShortenUrlResponse> shortenUrl(@Valid @RequestBody ShortenUrlRequest request) {
 
         String shortCode = urlShortenerService.shortenUrl(request.url(), request.customAlias(), request.hoursToExpire());

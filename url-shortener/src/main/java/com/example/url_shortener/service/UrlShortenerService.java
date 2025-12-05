@@ -25,7 +25,7 @@ public class UrlShortenerService {
 
         if (StringUtils.hasText(customAlias)) {
             if (urlMappingRepository.findByShortCode(customAlias).isPresent()) {
-                throw new AliasAlreadyExistsException("Alias" + customAlias + "is already in use.");
+                throw new AliasAlreadyExistsException("Alias " + customAlias + " is already in use.");
             }
 
             UrlMapping newUrlMapping = new UrlMapping();
@@ -78,7 +78,7 @@ public class UrlShortenerService {
     public UrlStatsResponse getStats(String shortCode){
 
         UrlMapping urlMapping = urlMappingRepository.findByShortCode(shortCode).orElseThrow(() -> new UrlNotFoundException("No statistics found for shortCode: " + shortCode));
-        String fullShortUrl = "http://localhost:8080/api/v1/" + urlMapping.getShortCode();
+        String fullShortUrl = "http://localhost:8080/" + urlMapping.getShortCode();
 
         return new UrlStatsResponse(
                 urlMapping.getOriginalUrl(),
