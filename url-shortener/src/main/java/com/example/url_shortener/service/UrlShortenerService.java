@@ -37,6 +37,8 @@ public class UrlShortenerService {
             newUrlMapping.setCreationDate(LocalDateTime.now());
             newUrlMapping.setShortCode(customAlias);
 
+            newUrlMapping.setClickCount(0);
+
             if(hoursToExpire != null){
                 newUrlMapping.setExpirationDate(LocalDateTime.now().plusHours(hoursToExpire));
             }

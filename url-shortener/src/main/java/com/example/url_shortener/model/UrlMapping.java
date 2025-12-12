@@ -26,7 +26,8 @@ public class UrlMapping {
     @Column(nullable = false)
     private LocalDateTime creationDate;
 
-    private long clickCount;
+    @Column(nullable = false)
+    private int clickCount = 0;
 
     private LocalDateTime expirationDate;
     //Getters
