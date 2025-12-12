@@ -9,12 +9,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
 @Controller
 public class PageController {
     private final UrlShortenerService urlShortenerService;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
     public PageController(UrlShortenerService urlShortenerService){
         this.urlShortenerService = urlShortenerService;
     }
@@ -31,7 +35,7 @@ public class PageController {
 
         try{
             String shortCode = urlShortenerService.shortenUrl(longUrl, customAlias, null);
-            String fullShortUrl = "http://localhost:8080/" + shortCode;
+            String fullShortUrl = baseUrl + "/" + shortCode;
             model.addAttribute("shortUrlResult", fullShortUrl);
         }
         catch (AliasAlreadyExistsException e){

@@ -8,6 +8,7 @@ import com.example.url_shortener.repository.UrlMappingRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,9 @@ public class UrlShortenerService {
 
     private static final String Base62_Chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private final UrlMappingRepository urlMappingRepository;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
     public UrlShortenerService(UrlMappingRepository urlMappingRepository){
         this.urlMappingRepository = urlMappingRepository;
     }
@@ -78,7 +82,7 @@ public class UrlShortenerService {
     public UrlStatsResponse getStats(String shortCode){
 
         UrlMapping urlMapping = urlMappingRepository.findByShortCode(shortCode).orElseThrow(() -> new UrlNotFoundException("No statistics found for shortCode: " + shortCode));
-        String fullShortUrl = "http://localhost:8080/" + urlMapping.getShortCode();
+        String fullShortUrl = baseUrl + "/" + urlMapping.getShortCode();
 
         return new UrlStatsResponse(
                 urlMapping.getOriginalUrl(),

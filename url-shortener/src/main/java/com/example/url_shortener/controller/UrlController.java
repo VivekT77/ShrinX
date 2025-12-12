@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.beans.factory.annotation.Value;
 import java.net.URI;
 
 @RestController
@@ -23,6 +23,9 @@ public class UrlController {
         this.urlShortenerService = urlShortenerService;
     }
 
+    @Value("${app.base-url}")
+    private String baseUrl;
+
     // Handle favicon to prevent errors
     @GetMapping("/favicon.ico")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -34,7 +37,7 @@ public class UrlController {
     public ResponseEntity<ShortenUrlResponse> shortenUrl(@Valid @RequestBody ShortenUrlRequest request) {
 
         String shortCode = urlShortenerService.shortenUrl(request.url(), request.customAlias(), request.hoursToExpire());
-        String fullShortUrl = "http://localhost:8080/" + shortCode;
+        String fullShortUrl = baseUrl + "/" + shortCode;
         ShortenUrlResponse response = new ShortenUrlResponse(fullShortUrl);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
