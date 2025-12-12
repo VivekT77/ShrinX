@@ -4,8 +4,7 @@
 
 # We start with an official Maven image that includes OpenJDK 17.
 # Using a specific version tag (e.g., 3.8.5-openjdk-17) is a best practice for reproducible builds.
-FROM maven:3.8.5-openjdk-17 AS builder
-
+FROM maven:3.9.6-eclipse-temurin-21-alpine AS builder
 # Set the working directory inside the container.
 WORKDIR /app
 
@@ -29,8 +28,7 @@ RUN mvn package -DskipTests
 # STAGE 2: The "Runner" Stage
 # We start the final stage with a minimal, production-ready JRE image.
 # The 'slim' variant is smaller and more secure than the full JDK image.
-FROM eclipse-temurin:17-jre-alpine
-
+FROM eclipse-temurin:21-jre-alpine
 # Set the working directory for our running application.
 WORKDIR /app
 
