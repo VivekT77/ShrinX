@@ -29,7 +29,7 @@ RUN mvn package -DskipTests
 # STAGE 2: The "Runner" Stage
 # We start the final stage with a minimal, production-ready JRE image.
 # The 'slim' variant is smaller and more secure than the full JDK image.
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-alpine
 
 # Set the working directory for our running application.
 WORKDIR /app
